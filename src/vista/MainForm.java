@@ -4,21 +4,25 @@
  * and open the template in the editor.
  */
 package vista;
-import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-        
+
 
 /**
  *
@@ -33,10 +37,11 @@ public class MainForm extends javax.swing.JFrame {
     public String operador;
     public float resultado;
     public boolean isUsed = true;
+    public boolean modeDark = false;
     
     private Point initialClick;
     
-    
+
     public MainForm() {
         initComponents();
         setLocationRelativeTo(this);
@@ -61,7 +66,7 @@ public class MainForm extends javax.swing.JFrame {
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 // Establecer esquinas redondeadas
-                int cornerRadius = 20; // Tamaño del radio de las esquinas
+                int cornerRadius = 25; // Tamaño del radio de las esquinas
                 Dimension arcs = new Dimension(cornerRadius, cornerRadius);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -72,11 +77,11 @@ public class MainForm extends javax.swing.JFrame {
             }
         };
         panelEntrada = new javax.swing.JPanel();
-        txtEntrada = new javax.swing.JLabel();
         txtOperaciones = new javax.swing.JLabel();
         iconCerrar = new javax.swing.JLabel();
-        iconCerrar1 = new javax.swing.JLabel();
-        iconCerrar2 = new javax.swing.JLabel();
+        iconMinimizar = new javax.swing.JLabel();
+        btnOptionMode = new javax.swing.JLabel();
+        txtEntrada = new javax.swing.JTextField();
         panelBotones = new javax.swing.JPanel();
         btn7 = new javax.swing.JButton();
         btn8 = new javax.swing.JButton();
@@ -130,7 +135,8 @@ public class MainForm extends javax.swing.JFrame {
     setUndecorated(true);
     setResizable(false);
 
-    panelPrincipal.setBackground(new java.awt.Color(23, 23, 28));
+    panelPrincipal.setBackground(new java.awt.Color(241, 242, 243));
+    panelPrincipal.setForeground(new java.awt.Color(241, 242, 243));
     panelPrincipal.setOpaque(false);
     panelPrincipal.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -138,16 +144,10 @@ public class MainForm extends javax.swing.JFrame {
     panelEntrada.setOpaque(false);
     panelEntrada.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-    txtEntrada.setFont(new java.awt.Font("Roboto", 1, 48)); // NOI18N
-    txtEntrada.setForeground(new java.awt.Color(255, 255, 255));
-    txtEntrada.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-    txtEntrada.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-    panelEntrada.add(txtEntrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 102, 227, 50));
-
-    txtOperaciones.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
-    txtOperaciones.setForeground(new java.awt.Color(46, 47, 56));
+    txtOperaciones.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    txtOperaciones.setForeground(new java.awt.Color(210, 211, 218));
     txtOperaciones.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-    panelEntrada.add(txtOperaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 227, 37));
+    panelEntrada.add(txtOperaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 230, 37));
 
     iconCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/btn_cross_dark.png"))); // NOI18N
     iconCerrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -158,13 +158,33 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelEntrada.add(iconCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 20, 24, 24));
 
-    iconCerrar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/minimizar_bar_dark.png"))); // NOI18N
-    iconCerrar1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    panelEntrada.add(iconCerrar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 100, 3));
+    iconMinimizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/minimizar_bar_light.png"))); // NOI18N
+    iconMinimizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    iconMinimizar.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            iconMinimizarMouseClicked(evt);
+        }
+    });
+    panelEntrada.add(iconMinimizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 100, 3));
 
-    iconCerrar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/btn_dark.png"))); // NOI18N
-    iconCerrar2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    panelEntrada.add(iconCerrar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 50, 22));
+    btnOptionMode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/btn_light.png"))); // NOI18N
+    btnOptionMode.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    btnOptionMode.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            btnOptionModeMouseClicked(evt);
+        }
+    });
+    panelEntrada.add(btnOptionMode, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 50, 22));
+
+    txtEntrada.setEditable(false);
+    txtEntrada.setBackground(new java.awt.Color(241, 242, 243));
+    txtEntrada.setFont(new java.awt.Font("Roboto", 0, 48)); // NOI18N
+    txtEntrada.setForeground(new java.awt.Color(0, 0, 0));
+    txtEntrada.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+    txtEntrada.setBorder(null);
+    txtEntrada.setFocusable(false);
+    txtEntrada.setHighlighter(null);
+    panelEntrada.add(txtEntrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 220, 50));
 
     panelPrincipal.add(panelEntrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -3, 250, 160));
 
@@ -172,9 +192,9 @@ public class MainForm extends javax.swing.JFrame {
     panelBotones.setOpaque(false);
     panelBotones.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-    btn7.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn7.setForeground(new java.awt.Color(255, 255, 255));
-    btn7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn7.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn7.setForeground(new java.awt.Color(0, 0, 0));
+    btn7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn7.setText("7");
     btn7.setBorderPainted(false);
     btn7.setContentAreaFilled(false);
@@ -186,9 +206,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 50, 50));
 
-    btn8.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn8.setForeground(new java.awt.Color(255, 255, 255));
-    btn8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn8.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn8.setForeground(new java.awt.Color(0, 0, 0));
+    btn8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn8.setText("8");
     btn8.setBorderPainted(false);
     btn8.setContentAreaFilled(false);
@@ -200,9 +220,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 50, 50));
 
-    btn9.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn9.setForeground(new java.awt.Color(255, 255, 255));
-    btn9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn9.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn9.setForeground(new java.awt.Color(0, 0, 0));
+    btn9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn9.setText("9");
     btn9.setBorderPainted(false);
     btn9.setContentAreaFilled(false);
@@ -214,8 +234,8 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn9, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, 50, 50));
 
-    btnSumar.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnSumar.setForeground(new java.awt.Color(255, 255, 255));
+    btnSumar.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnSumar.setForeground(new java.awt.Color(0, 0, 0));
     btnSumar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background2_right_dark.png"))); // NOI18N
     btnSumar.setText("+");
     btnSumar.setBorderPainted(false);
@@ -228,9 +248,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btnSumar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 130, 50, 80));
 
-    btn4.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn4.setForeground(new java.awt.Color(255, 255, 255));
-    btn4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn4.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn4.setForeground(new java.awt.Color(0, 0, 0));
+    btn4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn4.setText("4");
     btn4.setBorderPainted(false);
     btn4.setContentAreaFilled(false);
@@ -242,9 +262,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 50, 50));
 
-    btn5.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn5.setForeground(new java.awt.Color(255, 255, 255));
-    btn5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn5.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn5.setForeground(new java.awt.Color(0, 0, 0));
+    btn5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn5.setText("5");
     btn5.setBorderPainted(false);
     btn5.setContentAreaFilled(false);
@@ -256,9 +276,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn5, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 50, 50));
 
-    btn6.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn6.setForeground(new java.awt.Color(255, 255, 255));
-    btn6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn6.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn6.setForeground(new java.awt.Color(0, 0, 0));
+    btn6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn6.setText("6");
     btn6.setBorderPainted(false);
     btn6.setContentAreaFilled(false);
@@ -270,8 +290,8 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn6, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 130, 50, 50));
 
-    btnRestar.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnRestar.setForeground(new java.awt.Color(255, 255, 255));
+    btnRestar.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnRestar.setForeground(new java.awt.Color(0, 0, 0));
     btnRestar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_right_dark.png"))); // NOI18N
     btnRestar.setText("-");
     btnRestar.setBorderPainted(false);
@@ -284,9 +304,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btnRestar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, 50, 50));
 
-    btn1.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn1.setForeground(new java.awt.Color(255, 255, 255));
-    btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn1.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn1.setForeground(new java.awt.Color(0, 0, 0));
+    btn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn1.setText("1");
     btn1.setBorderPainted(false);
     btn1.setContentAreaFilled(false);
@@ -298,9 +318,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 50, 50));
 
-    btn2.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn2.setForeground(new java.awt.Color(255, 255, 255));
-    btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn2.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn2.setForeground(new java.awt.Color(0, 0, 0));
+    btn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn2.setText("2");
     btn2.setBorderPainted(false);
     btn2.setContentAreaFilled(false);
@@ -312,9 +332,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, 50, 50));
 
-    btn3.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn3.setForeground(new java.awt.Color(255, 255, 255));
-    btn3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btn3.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn3.setForeground(new java.awt.Color(0, 0, 0));
+    btn3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btn3.setText("3");
     btn3.setBorderPainted(false);
     btn3.setContentAreaFilled(false);
@@ -326,9 +346,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn3, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 50, 50));
 
-    btnDividir.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnDividir.setForeground(new java.awt.Color(255, 255, 255));
-    btnDividir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_top_dark.png"))); // NOI18N
+    btnDividir.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnDividir.setForeground(new java.awt.Color(0, 0, 0));
+    btnDividir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_top_light.png"))); // NOI18N
     btnDividir.setText("/");
     btnDividir.setBorderPainted(false);
     btnDividir.setContentAreaFilled(false);
@@ -340,9 +360,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btnDividir, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 50, 50));
 
-    btnPunto.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnPunto.setForeground(new java.awt.Color(255, 255, 255));
-    btnPunto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_number_dark.png"))); // NOI18N
+    btnPunto.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnPunto.setForeground(new java.awt.Color(0, 0, 0));
+    btnPunto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_number_light.png"))); // NOI18N
     btnPunto.setText(".");
     btnPunto.setBorderPainted(false);
     btnPunto.setContentAreaFilled(false);
@@ -354,9 +374,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btnPunto, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 250, 50, 50));
 
-    btn0.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btn0.setForeground(new java.awt.Color(255, 255, 255));
-    btn0.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_bottom_dark.png"))); // NOI18N
+    btn0.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btn0.setForeground(new java.awt.Color(0, 0, 0));
+    btn0.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background_bottom_light.png"))); // NOI18N
     btn0.setText("0");
     btn0.setBorderPainted(false);
     btn0.setContentAreaFilled(false);
@@ -368,8 +388,8 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btn0, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 110, 50));
 
-    btnIgual.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnIgual.setForeground(new java.awt.Color(255, 255, 255));
+    btnIgual.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnIgual.setForeground(new java.awt.Color(0, 0, 0));
     btnIgual.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background2_right_dark.png"))); // NOI18N
     btnIgual.setText("=");
     btnIgual.setBorderPainted(false);
@@ -382,8 +402,8 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btnIgual, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 220, 50, 80));
 
-    btnMultiplicar.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnMultiplicar.setForeground(new java.awt.Color(255, 255, 255));
+    btnMultiplicar.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnMultiplicar.setForeground(new java.awt.Color(0, 0, 0));
     btnMultiplicar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background_right_dark.png"))); // NOI18N
     btnMultiplicar.setText("*");
     btnMultiplicar.setBorderPainted(false);
@@ -396,9 +416,9 @@ public class MainForm extends javax.swing.JFrame {
     });
     panelBotones.add(btnMultiplicar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 10, 50, 50));
 
-    btnBorrar.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-    btnBorrar.setForeground(new java.awt.Color(255, 255, 255));
-    btnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_dark/background2_top_dark.png"))); // NOI18N
+    btnBorrar.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+    btnBorrar.setForeground(new java.awt.Color(0, 0, 0));
+    btnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/image_light/background2_top_light.png"))); // NOI18N
     btnBorrar.setText("C");
     btnBorrar.setBorderPainted(false);
     btnBorrar.setContentAreaFilled(false);
@@ -555,6 +575,81 @@ public class MainForm extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_iconCerrarMouseClicked
 
+    private void iconMinimizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iconMinimizarMouseClicked
+
+        // Miminizar el programa
+        this.setState(ICONIFIED);
+    }//GEN-LAST:event_iconMinimizarMouseClicked
+
+    private void btnOptionModeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOptionModeMouseClicked
+
+        if (!modeDark) {
+            modeDark = true;
+            panelPrincipal.setBackground(new Color(23,23,28));
+            txtEntrada.setBackground(new Color(23,23,28));
+            setLabelIcon(btnOptionMode, "/imagen/image_dark/btn_dark.png");
+            setLabelIcon(iconMinimizar, "/imagen/image_dark/minimizar_bar_dark.png");
+            
+            setLabelIcon(btn1, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn2, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn3, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn4, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn5, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn6, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn7, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn8, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn9, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btnPunto, "/imagen/image_dark/background_number_dark.png");
+            setLabelIcon(btn0, "/imagen/image_dark/background_bottom_dark.png");
+            setLabelIcon(btnDividir, "/imagen/image_dark/background_top_dark.png");
+            setLabelIcon(btnBorrar, "/imagen/image_dark/background2_top_dark.png");
+            
+            changeButtonForeground(panelBotones, Color.white);
+            txtEntrada.setForeground(Color.white);
+            txtOperaciones.setForeground(new Color(46,47,56));
+        }else{
+            modeDark = false;
+            panelPrincipal.setBackground(new Color(241,242,243));
+            txtEntrada.setBackground(new Color(241,242,243));
+            setLabelIcon(btnOptionMode, "/imagen/image_light/btn_light.png");
+            setLabelIcon(iconMinimizar, "/imagen/image_light/minimizar_bar_light.png");
+            
+            setLabelIcon(btn1, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn2, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn3, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn4, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn5, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn6, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn7, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn8, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn9, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btnPunto, "/imagen/image_light/background_number_light.png");
+            setLabelIcon(btn0, "/imagen/image_light/background_bottom_light.png");
+            setLabelIcon(btnDividir, "/imagen/image_light/background_top_light.png");
+            setLabelIcon(btnBorrar, "/imagen/image_light/background2_top_light.png");
+            
+            changeButtonForeground(panelBotones, Color.black);
+            txtEntrada.setForeground(Color.black);
+            txtOperaciones.setForeground(new Color(60,63,65));
+        }
+
+    }//GEN-LAST:event_btnOptionModeMouseClicked
+
+    // metodo para insertar icono a componentes como JButton y JLabel
+    public void setLabelIcon(Object componente, String direccion){
+        
+        if (componente instanceof JButton) {
+            JButton button = (JButton) componente;
+            ImageIcon icon = new ImageIcon(getClass().getResource(direccion));
+            button.setIcon(icon);
+        } else if (componente instanceof JLabel) {
+            JLabel label = (JLabel) componente;
+            ImageIcon icon = new ImageIcon(getClass().getResource(direccion));
+            label.setIcon(icon);
+        }
+        
+    }
+    
     // metodo para ingresar los textos a la entrada
     public void setTextEntrada(String texto){
         String nuevo, valor;
@@ -610,6 +705,18 @@ public class MainForm extends javax.swing.JFrame {
         return retorno;
     }
     
+    // metodo para cambiar el foreground de todos los Botones en un JPanel
+    public static void changeButtonForeground(JPanel panel, Color color) {
+        SwingUtilities.invokeLater(() -> {
+            Component[] components = panel.getComponents();
+            for (Component component : components) {
+                if (component instanceof AbstractButton) {
+                    AbstractButton button = (AbstractButton) component;
+                    button.setForeground(color);
+                }
+            }
+        });
+    }
     
     
     /**
@@ -662,16 +769,16 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JButton btnDividir;
     private javax.swing.JButton btnIgual;
     private javax.swing.JButton btnMultiplicar;
+    private javax.swing.JLabel btnOptionMode;
     private javax.swing.JButton btnPunto;
     private javax.swing.JButton btnRestar;
     private javax.swing.JButton btnSumar;
     private javax.swing.JLabel iconCerrar;
-    private javax.swing.JLabel iconCerrar1;
-    private javax.swing.JLabel iconCerrar2;
+    private javax.swing.JLabel iconMinimizar;
     private javax.swing.JPanel panelBotones;
     private javax.swing.JPanel panelEntrada;
     private javax.swing.JPanel panelPrincipal;
-    private javax.swing.JLabel txtEntrada;
+    private javax.swing.JTextField txtEntrada;
     private javax.swing.JLabel txtOperaciones;
     // End of variables declaration//GEN-END:variables
 }
